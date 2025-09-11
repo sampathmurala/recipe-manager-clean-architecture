@@ -5,6 +5,19 @@ using RecipeManager.Data.Sqlite.Gateways;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// --- CORS Configuration ---
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173") // Allow requests from our React app http://localhost:5173
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+// --- End of CORS Configuration ---
+
 // Add services to the container.
 builder.Services.AddControllers();
 
@@ -26,8 +39,11 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+// --- CORS Middleware ---
+app.UseCors();
+// --- End of CORS Middleware ---
 
+app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
